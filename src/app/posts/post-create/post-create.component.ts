@@ -1,6 +1,7 @@
 import {Component} from '@angular/core';
-import {NgForm} from "@angular/forms";
-import {PostsService} from "../posts.service";
+import {NgForm} from '@angular/forms';
+
+import {PostsService} from '../posts.service';
 
 @Component({
   selector: 'app-post-create',
