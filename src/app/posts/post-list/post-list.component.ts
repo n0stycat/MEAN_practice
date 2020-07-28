@@ -1,5 +1,6 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {Subscription} from 'rxjs';
+
 import {Post} from '../post.model';
 import {PostsService} from '../posts.service';
 
@@ -23,11 +24,11 @@ export class PostListComponent implements OnInit, OnDestroy {
       });
   }
 
-  ngOnDestroy() {
-    this.postsSub.unsubscribe();
-  }
-
   onDelete(postId: string) {
     this.postsService.deletePost(postId);
+  }
+
+  ngOnDestroy() {
+    this.postsSub.unsubscribe();
   }
 }
