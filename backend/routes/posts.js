@@ -66,10 +66,24 @@ router.put("/:id",
   });
 
 router.get("", (req, res) => {
-  Post.find().then(documents => {
+  const pageSize = +req.query.pagesize;
+  const currentPage = +req.query.currentpage;
+  const postQuery = Post.find();
+  let fetchedPosts;
+
+  if (pageSize && currentPage) {
+    postQuery
+      .skip(pageSize * (currentPage - 1))
+      .limit(pageSize);
+  }
+  postQuery.then(documents => {
+    fetchedPosts = documents;
+    return Post.count();
+  }).then(count => {
     res.status(200).json({
       message: "Posts fetched successfully!",
-      posts: documents
+      posts: fetchedPosts,
+      maxPosts: count
     });
   });
 });
@@ -85,8 +99,7 @@ router.get("/:id", (req, res) => {
 });
 
 router.delete("/:id", (req, res) => {
-  Post.deleteOne({_id: req.params.id}).then(result => {
-    console.log(result);
+  Post.deleteOne({_id: req.params.id}).then(() => {
     res.status(200).json({message: "Post deleted!"});
   });
 });
