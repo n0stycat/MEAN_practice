@@ -33,22 +33,23 @@ router.post(
   checkAuth,
   multer({storage: storage}).single('image'),
   (req, res) => {
-  const url = req.protocol + '://' + req.get("host");
-  const post = new Post({
-    title: req.body.title,
-    content: req.body.content,
-    imagePath: url + "/images/" + req.file.filename
-  });
-  post.save().then(createdPost => {
-    res.status(201).json({
-      message: "Post added successfully",
-      post: {
-        ...createdPost,
-        id: createdPost._id,
-      }
+    const url = req.protocol + '://' + req.get("host");
+    const post = new Post({
+      title: req.body.title,
+      content: req.body.content,
+      imagePath: url + "/images/" + req.file.filename,
+      creator: req.userData.userId
+    });
+    post.save().then(createdPost => {
+      res.status(201).json({
+        message: "Post added successfully",
+        post: {
+          ...createdPost,
+          id: createdPost._id,
+        }
+      });
     });
   });
-});
 
 router.put(
   "/:id",
@@ -66,9 +67,12 @@ router.put(
       content: req.body.content,
       imagePath: imagePath
     });
-    console.log(post);
-    Post.updateOne({_id: req.params.id}, post).then(() => {
-      res.status(200).json({message: "Update successful!"});
+    Post.updateOne({_id: req.params.id, creator: req.userData.userId}, post).then((result) => {
+      if (result.nModified > 0) {
+        res.status(200).json({message: "Update successful!"});
+      } else {
+        res.status(401).json({message: "Not authorized!"});
+      }
     });
   });
 
@@ -106,8 +110,14 @@ router.get("/:id", (req, res) => {
 });
 
 router.delete("/:id", checkAuth, (req, res) => {
-  Post.deleteOne({_id: req.params.id}).then(() => {
-    res.status(200).json({message: "Post deleted!"});
+  Post.deleteOne({_id: req.params.id, creator: req.userData.userId}).then(
+    result => {
+      console.log(result);
+    if (result.n > 0) {
+      res.status(200).json({message: "Deletion successful!"});
+    } else {
+      res.status(401).json({message: "Not authorized!"});
+    }
   });
 });
 
