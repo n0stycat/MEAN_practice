@@ -7,7 +7,7 @@ import {Router} from '@angular/router';
 import {environment} from '../../environments/environment';
 import {Post} from './post.model';
 
-const BACKEND_URL = environment.apiURL + "/posts/";
+const BACKEND_URL = environment.apiURL + '/posts/';
 
 @Injectable({providedIn: 'root'})
 export class PostsService {
@@ -88,9 +88,9 @@ export class PostsService {
       postData.append('image', image, title);
     } else {
       postData = {
-        id: id,
-        title: title,
-        content: content,
+        id,
+        title,
+        content,
         imagePath: image,
         creator: null
       };
