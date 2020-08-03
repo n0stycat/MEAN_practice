@@ -93,7 +93,6 @@ exports.getPost = (req, res) => {
 exports.deletePost = (req, res) => {
   Post.deleteOne({_id: req.params.id, creator: req.userData.userId}).then(
     result => {
-      console.log(result);
       if (result.n > 0) {
         res.status(200).json({message: "Deletion successful!"});
       } else {
